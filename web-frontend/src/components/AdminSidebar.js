@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
  {/* import AccountBoxIcon from '@mui/icons-material/AccountBox';*/}
 
 const sidebarContent = (
-  <Box sx={{ width: 250, bgcolor: 'background.paper', height: '100%', paddingTop: 2 }}>
+  <Box sx={{ width: 250, height: '100%', paddingTop: 2 }}>
     <List>
       <ListItem button component={Link} to="/admin">
         <ListItemIcon><DashboardIcon /></ListItemIcon>
@@ -34,6 +34,10 @@ const sidebarContent = (
       <ListItem button component={Link} to="/admin/services">
         <ListItemIcon><BuildIcon /></ListItemIcon>
         <ListItemText primary="Manage Services" />
+      </ListItem>
+      <ListItem button component={Link} to="/admin/invoice">
+        <ListItemIcon><ReportIcon /></ListItemIcon>
+        <ListItemText primary="Generate Invoice" />
       </ListItem>
       <ListItem button component={Link} to="/admin/report">
         <ListItemIcon><ReportIcon /></ListItemIcon>

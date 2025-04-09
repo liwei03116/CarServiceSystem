@@ -44,3 +44,33 @@ exports.getServiceRequestById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+// Update ServiceRequest
+exports.updateServiceRequest = async (req, res) => {
+  try {
+    const updatedServiceRequest = await ServiceRequest.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedServiceRequest) {
+      return res.status(404).json({ message: 'Service request not found' });
+    }
+    return res.json(updatedServiceRequest);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// Delete ServiceRequest
+exports.deleteServiceRequest = async (req, res) => {
+  try {
+    const serviceRequest = await ServiceRequest.findByIdAndDelete(req.params.id);
+    if (!serviceRequest) {
+      return res.status(404).json({ message: 'Service request not found' });
+    }
+    return res.json({ message: 'Service request deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

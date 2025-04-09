@@ -8,7 +8,8 @@ exports.protect = (req, res, next) => {
   }
 
   token = token.split(' ')[1];
-
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  console.log(decoded);
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // user id, role, etc.
