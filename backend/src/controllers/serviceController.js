@@ -30,3 +30,24 @@ exports.getServiceById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+exports.updateService = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract the service ID from the request parameters
+    const updateData = req.body; // The data to update
+
+    // Find the service by ID and update it with the new data
+    const updatedService = await Service.findByIdAndUpdate(id, updateData, {
+      new: true, // Return the updated document
+      runValidators: true // Run validators to ensure data integrity
+    });
+
+    if (!updatedService) {
+      return res.status(404).json({ message: 'Service not found' });
+    }
+
+    return res.json(updatedService);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
