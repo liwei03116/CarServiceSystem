@@ -35,6 +35,7 @@ const AdminHome = () => {
       .catch((err) => console.error(err));
 
     api
+      .get("/services/dashboard")
       .get("/services")
       .then((res) =>
         setStats((prev) => ({ ...prev, services: res.data.length }))
@@ -48,7 +49,6 @@ const AdminHome = () => {
       )
       .catch((err) => console.error(err));
   }, []);
-
   return (
     <Box sx={{ display: "flex" }}>
       <AdminSidebar />

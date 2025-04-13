@@ -3,13 +3,23 @@ const router = express.Router();
 const {
   createService,
   getServices,
-  updateService
+  updateService,
+  getServicesByContact,
+  getServicesDashBoard
 } = require('../controllers/serviceController');
 const { protect, adminOnly } = require('../middlewares/authMiddleware');
 const ServiceRequest = require('../models/ServiceRequest');
 const Service = require('../models/Service');
 
 router.post('/', protect, adminOnly, createService);
+router.get('/', protect, adminOnly, getServices);
+router.get('/dashboard', protect, adminOnly, getServicesDashBoard);
+
+router.get('/getServicesByContact/:contact', protect, adminOnly, getServicesByContact);
+// Admin can update a service request by ID
+router.put('/:id', protect, adminOnly, updateService);
+/*
+router.get('/manageService', protect, adminOnly, async (req, res) => {
 router.get('/', getServices);
 // Admin can update a service request by ID
 router.put('/:id', protect, adminOnly, updateService);
@@ -20,7 +30,6 @@ router.get('/manageService', async (req, res) => {
       { status: 'In Progress' },
       'ownerName ownerContact description requestedDate'
     );
-    
     const savedServices = [];
 
     for (const request of inProgressRequests) {
@@ -57,6 +66,7 @@ router.get('/manageService', async (req, res) => {
     res.status(500).json({ message: 'Error retrieving and storing service requests.' });
   }
 });
+*/
 
 // Similarly for getServiceById, updateService, deleteService...
 

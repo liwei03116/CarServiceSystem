@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from "../../api/api";
 import AdminSidebar from "../../components/AdminSidebar";
 import {
-  Container,
+  Box,
   Grid2 as Grid,
   Paper,
   Typography,
@@ -21,6 +21,19 @@ import {
   InputAdornment
 } from '@mui/material';
 
+// Helper function to format date/time as "yyyy-mm-dd HH:mm"
+const formatDateTime = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  if (isNaN(date)) return dateString;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
+};
+
 const ManageServices = () => {
   const [serviceRequests, setServiceRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -35,7 +48,7 @@ const ManageServices = () => {
 
   useEffect(() => {
     // Fetch filtered service requests from the API (only "In Progress" requests)
-    api.get('/services/manageService')
+    api.get('/services')
       .then(response => {
         setServiceRequests(response.data.data);
       })
@@ -87,11 +100,9 @@ const ManageServices = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Grid container spacing={3}>
-        <Grid item xs={3}>
-          <AdminSidebar />
-        </Grid>
+    <Box sx={{ display: 'flex' }}>
+      <AdminSidebar />
+      <Box sx={{ flex: 1, p: 3 }}>
         <Grid item xs={9}>
           <Paper elevation={3} sx={{ padding: 2 }}>
             <Typography variant="h4" gutterBottom>
@@ -101,9 +112,10 @@ const ManageServices = () => {
               <Table sx={{ minWidth: 650 }} aria-label="service table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Owner Name</TableCell>
-                    <TableCell>Owner Contact</TableCell>
+                    <TableCell>Customer Name</TableCell>
+                    <TableCell>Customer Contact</TableCell>
                     <TableCell>Description</TableCell>
+                    <TableCell>Requested Date</TableCell>
                     <TableCell>Price</TableCell>
                   </TableRow>
                 </TableHead>
@@ -118,6 +130,7 @@ const ManageServices = () => {
                       <TableCell>{request.ownerName}</TableCell>
                       <TableCell>{request.ownerContact}</TableCell>
                       <TableCell>{request.description}</TableCell>
+                      <TableCell>{formatDateTime(request.requestedDate)}</TableCell>
                       <TableCell>${request.price}</TableCell>
                     </TableRow>
                   ))}
@@ -126,7 +139,7 @@ const ManageServices = () => {
             </TableContainer>
           </Paper>
         </Grid>
-      </Grid>
+      </Box>
       {/* Popup Dialog for updating customer details */}
       <Dialog open={openDialog} onClose={handleDialogClose} fullWidth maxWidth="sm">
         <DialogTitle>Update Customer Detail</DialogTitle>
@@ -182,7 +195,7 @@ const ManageServices = () => {
           </DialogActions>
         </form>
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 
