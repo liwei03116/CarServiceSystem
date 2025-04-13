@@ -20,6 +20,10 @@ router.get('/getServicesByContact/:contact', protect, adminOnly, getServicesByCo
 router.put('/:id', protect, adminOnly, updateService);
 /*
 router.get('/manageService', protect, adminOnly, async (req, res) => {
+router.get('/', getServices);
+// Admin can update a service request by ID
+router.put('/:id', protect, adminOnly, updateService);
+router.get('/manageService', async (req, res) => {
   try {
     // Retrieve in-progress service requests with necessary fields (including requestedDate)
     const inProgressRequests = await ServiceRequest.find(
