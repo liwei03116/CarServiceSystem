@@ -36,7 +36,6 @@ const AdminHome = () => {
 
     api
       .get("/services/dashboard")
-      .get("/services")
       .then((res) =>
         setStats((prev) => ({ ...prev, services: res.data.length }))
       )
