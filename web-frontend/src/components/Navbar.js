@@ -13,11 +13,15 @@ import {
   Box
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ColorModeContext } from '../context/ColorModeContext';
 
 function Navbar() {
   const { auth, logout } = useContext(AuthContext);
+  const { mode, toggleColorMode } = useContext(ColorModeContext);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -59,6 +63,9 @@ function Navbar() {
             <ListItemText primary="Admin" />
           </ListItem>
         )}
+        <ListItem button onClick={toggleColorMode}>
+          <ListItemText primary="Toggle Dark/Light" />
+        </ListItem>
       </List>
     </Box>
   );
@@ -68,6 +75,15 @@ function Navbar() {
       <AppBar position="static">
         <Container maxWidth="lg">
           <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
             {/* Title on the left */}
             <Typography
               variant="h6"
@@ -102,6 +118,9 @@ function Navbar() {
                   Admin
                 </Button>
               )}
+              <IconButton sx={{ ml: 1 }} color="inherit" onClick={toggleColorMode}>
+                {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
             </Box>
             {/* Menu icon for mobile (on xs screens) */}
             <IconButton

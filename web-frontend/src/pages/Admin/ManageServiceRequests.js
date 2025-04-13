@@ -11,7 +11,7 @@ import {
   Paper,
   TextField,
   MenuItem,
-  Grid,
+  Grid2 as Grid,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -46,6 +46,8 @@ const ManageServiceRequests = () => {
   // States for editing: when a row is to be edited, store its data here.
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState(null);
+  // New state to track sort order for Requested Date
+  const [sortRequestedDateOrder, setSortRequestedDateOrder] = useState("asc");
 
   // Function to refresh the list of requests
   const refreshRequests = () => {
@@ -103,6 +105,11 @@ const ManageServiceRequests = () => {
       .catch((err) => console.error(err));
   };
 
+  // Toggle sort order for the Requested Date column
+  const toggleSortRequestedDateOrder = () => {
+    setSortRequestedDateOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
+
   // Filter the requests based on owner name and status.
   const filteredRequests = requests.filter((req) => {
     const matchesOwner = req.ownerName
@@ -110,6 +117,15 @@ const ManageServiceRequests = () => {
       .includes(filterOwner.toLowerCase());
     const matchesStatus = filterStatus === "All" || req.status === filterStatus;
     return matchesOwner && matchesStatus;
+  });
+
+  // Sort the filteredRequests based on requestedDate
+  const sortedRequests = [...filteredRequests].sort((a, b) => {
+    const dateA = new Date(a.requestedDate);
+    const dateB = new Date(b.requestedDate);
+    return sortRequestedDateOrder === "asc"
+      ? dateA - dateB
+      : dateB - dateA;
   });
 
   return (
@@ -166,13 +182,19 @@ const ManageServiceRequests = () => {
                 <TableCell>Customer Address</TableCell>
                 <TableCell>Service</TableCell>
                 <TableCell>Car Type</TableCell>
-                <TableCell>Requested Date</TableCell>
+                {/* Clickable header for sorting */}
+                <TableCell
+                  onClick={toggleSortRequestedDateOrder}
+                  sx={{ cursor: "pointer" }}
+                >
+                  Requested Date {sortRequestedDateOrder === "asc" ? "↑" : "↓"}
+                </TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredRequests.map((req) => (
+              {sortedRequests.map((req) => (
                 <TableRow key={req._id}>
                   <TableCell>{req._id}</TableCell>
                   <TableCell>{req.ownerName}</TableCell>

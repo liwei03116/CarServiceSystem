@@ -1,7 +1,11 @@
 import React from 'react';
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography, Container, useTheme } from '@mui/material';
 
 function Footer() {
+  const theme = useTheme();
+  const footerBackgroundColor =
+    theme.palette.mode === 'light' ? '#f5f5f5' : theme.palette.background.default;
+
   return (
     <Box
       component="footer"
@@ -9,7 +13,7 @@ function Footer() {
         py: 3,
         textAlign: 'center',
         mt: 'auto',
-        backgroundColor: '#f5f5f5'
+        backgroundColor: footerBackgroundColor,
       }}
     >
       <Container maxWidth="lg">

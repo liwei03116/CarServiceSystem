@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Box, Typography, Button, Container, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-import AdminSidebar from '../../components/AdminSidebar';
-import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from "react";
+import { Box, Typography, Button, Container, Paper } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import AdminSidebar from "../../components/AdminSidebar";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
 
 const AdminHome = () => {
   const { logout } = useContext(AuthContext);
@@ -13,57 +13,54 @@ const AdminHome = () => {
     mechanics: 0,
     services: 0,
     requests: 0,
-    users: 0
+    users: 0,
   });
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    navigate("/admin/login");
   };
 
   useEffect(() => {
-    axios
-      .get('/api/users')
-      .then(res =>
-        setStats(prev => ({ ...prev, users: res.data.length }))
-      )
-      .catch(err => console.error(err));
+    api
+      .get("/users")
+      .then((res) => setStats((prev) => ({ ...prev, users: res.data.length })))
+      .catch((err) => console.error(err));
 
-    axios
-      .get('/api/mechanics')
-      .then(res =>
-        setStats(prev => ({ ...prev, mechanics: res.data.length }))
+    api
+      .get("/mechanics")
+      .then((res) =>
+        setStats((prev) => ({ ...prev, mechanics: res.data.length }))
       )
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
 
-    axios
-      .get('/api/services')
-      .then(res =>
-        setStats(prev => ({ ...prev, services: res.data.length }))
+    api
+      .get("/services/dashboard")
+      .then((res) =>
+        setStats((prev) => ({ ...prev, services: res.data.length }))
       )
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
 
-    axios
-      .get('/api/requests')
-      .then(res =>
-        setStats(prev => ({ ...prev, requests: res.data.length }))
+    api
+      .get("/requests")
+      .then((res) =>
+        setStats((prev) => ({ ...prev, requests: res.data.length }))
       )
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   }, []);
-
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <AdminSidebar />
       <Box sx={{ flex: 1, p: 3 }}>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 3
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
           }}
         >
-          <Typography variant="h4">Admin Dashboard</Typography>
+          <Typography variant="h4">Dashboard</Typography>
           <Button variant="contained" color="secondary" onClick={handleLogout}>
             Logout
           </Button>

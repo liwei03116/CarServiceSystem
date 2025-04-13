@@ -44,7 +44,7 @@ const Home = () => {
       {/*<VehicleCategoryList />*/}
 
       {/* Services Provided */}
-      <ServiceList onBook={() => {}} />
+      {/*<ServiceList onBook={() => {}} />*/}
 
       {/* Service Request Form */}
       <ServiceRequestForm />

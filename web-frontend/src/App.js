@@ -16,6 +16,7 @@ import ManageMechanics from './pages/Admin/ManageMechanics';
 import ManageServiceRequests from './pages/Admin/ManageServiceRequests';
 import ManageVehicleCategories from './pages/Admin/ManageVehicleCategories';
 import ManageServices from './pages/Admin/ManageServices';
+import GenerateInvoice from './pages/Admin/GenerateInvoice';
 import GenerateReport from './pages/Admin/GenerateReport';
 import ManageUsers from './pages/Admin/ManageUsers';
 import ManageWebsiteInfo from './pages/Admin/ManageWebsiteInfo';
@@ -42,6 +43,7 @@ function App() {
                 <Route path="service-requests" element={<ManageServiceRequests />} />
                 <Route path="vehicle-categories" element={<ManageVehicleCategories />} />
                 <Route path="services" element={<ManageServices />} />
+                <Route path="invoice" element={<GenerateInvoice />} />
                 <Route path="report" element={<GenerateReport />} />
                 <Route path="users" element={<ManageUsers />} />
                 <Route path="website-info" element={<ManageWebsiteInfo />} />
@@ -54,6 +56,7 @@ function App() {
       </Routes>
       <Footer />
     </AuthProvider>
+    //add this
   );
 }
 
