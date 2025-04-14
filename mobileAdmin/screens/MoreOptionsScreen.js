@@ -20,7 +20,6 @@ const MoreOptionsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>More Options</Text>
       <FlatList
         data={options}
         keyExtractor={(item) => item.title}

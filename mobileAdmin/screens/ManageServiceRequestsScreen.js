@@ -6,34 +6,46 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
+  ScrollView,
 } from "react-native";
-import { Card, Title, Button, Paragraph, Text, TextInput } from "react-native-paper";
+import {
+  Card,
+  Title,
+  Button,
+  Paragraph,
+  Text,
+  TextInput,
+  Appbar,
+} from "react-native-paper";
 import RNPickerSelect from "react-native-picker-select";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import api from "../api/api";
 
 const ManageServiceRequestsScreen = ({ navigation }) => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // State for edit modal
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editData, setEditData] = useState(null);
-  
-  // State for add modal and new request form data
+
+  // State for add modal, date picker and new request form data
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [newRequestData, setNewRequestData] = useState({
     ownerName: "",
     ownerContact: "",
     ownerEmail: "",
     address: "",
     carName: "",
-    carType: "",
+    carType: null,
     carRegistrationNumber: "",
-    service: "",
-    requestedDate: "",
+    service: null,
+    // We replace requestedDate with preferredDateTime to store ISO string
+    preferredDateTime: null,
     description: "",
     requestType: "",
-    status: "Pending", // default status for new requests
+    status: "Pending",
   });
 
   useEffect(() => {
@@ -88,21 +100,34 @@ const ManageServiceRequestsScreen = ({ navigation }) => {
   };
 
   const handleAddRequest = async () => {
+    // Simple validation for required fields
+    if (
+      !newRequestData.ownerName.trim() ||
+      !newRequestData.ownerContact.trim() ||
+      !newRequestData.address.trim() ||
+      !newRequestData.carType ||
+      !newRequestData.service ||
+      !newRequestData.preferredDateTime
+    ) {
+      Alert.alert("Validation Error", "Please fill in all required fields.");
+      return;
+    }
+
     try {
       await api.post("/requests", newRequestData);
       fetchRequests();
       setAddModalVisible(false);
-      // Reset new request form
+      // Reset form
       setNewRequestData({
         ownerName: "",
         ownerContact: "",
         ownerEmail: "",
         address: "",
         carName: "",
-        carType: "",
+        carType: null,
         carRegistrationNumber: "",
-        service: "",
-        requestedDate: "",
+        service: null,
+        preferredDateTime: null,
         description: "",
         requestType: "",
         status: "Pending",
@@ -119,7 +144,12 @@ const ManageServiceRequestsScreen = ({ navigation }) => {
         <Paragraph>Status: {item.status}</Paragraph>
         <Paragraph>Owner Contact: {item.ownerContact}</Paragraph>
         <Paragraph>Address: {item.address}</Paragraph>
-        <Paragraph>Request Date: {item.requestedDate}</Paragraph>
+        <Paragraph>
+          Preferred Date:{" "}
+          {item.requestedDate
+            ? new Date(item.requestedDate).toLocaleString()
+            : ""}
+        </Paragraph>
       </Card.Content>
       <Card.Actions>
         <Button onPress={() => handleEditPress(item)}>Edit</Button>
@@ -145,7 +175,7 @@ const ManageServiceRequestsScreen = ({ navigation }) => {
         Add New Request
       </Button>
 
-      {/* Edit Request Modal */}
+      {/* Edit Request Modal (unchanged for brevity) */}
       <Modal visible={editModalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -178,15 +208,34 @@ const ManageServiceRequestsScreen = ({ navigation }) => {
               onChangeText={(text) => handleEditChange("service", text)}
               style={styles.input}
             />
-            <TextInput
-              mode="outlined"
-              label="Request Date"
-              value={editData?.requestedDate}
-              onChangeText={(text) => handleEditChange("requestedDate", text)}
-              style={styles.input}
-            />
-
-            {/* Dropdown for Status */}
+            <View style={styles.dateTimeContainer}>
+        <Button
+          mode="outlined"
+          onPress={() => setShowDatePicker(true)}
+        >
+          {editData?.requestedDate
+            ? new Date(editData.requestedDate).toLocaleString()
+            : "Select Request Date & Time"}
+        </Button>
+        {showDatePicker && (
+          <DateTimePicker
+            value={
+              editData?.requestedDate
+                ? new Date(editData.requestedDate)
+                : new Date()
+            }
+            mode="datetime"
+            is24Hour={true}
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowDatePicker(false);
+              if (selectedDate) {
+                handleEditChange("requestedDate", selectedDate.toISOString());
+              }
+            }}
+          />
+        )}
+      </View>
             <RNPickerSelect
               onValueChange={(value) => handleEditChange("status", value)}
               items={[
@@ -199,7 +248,6 @@ const ManageServiceRequestsScreen = ({ navigation }) => {
               placeholder={{ label: "Select Status", value: null }}
               style={pickerSelectStyles}
             />
-
             <View style={styles.buttonRow}>
               <Button mode="contained" onPress={handleSaveEdit}>
                 Save
@@ -212,114 +260,119 @@ const ManageServiceRequestsScreen = ({ navigation }) => {
         </View>
       </Modal>
 
-      {/* Add New Request Modal */}
+      {/* Add New Request Modal with enhanced UI */}
       <Modal visible={addModalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New Request</Text>
-            <TextInput
-              mode="outlined"
-              label="Owner Name"
-              value={newRequestData.ownerName}
-              onChangeText={(text) => handleAddChange("ownerName", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Owner Email"
-              value={newRequestData.ownerEmail}
-              onChangeText={(text) => handleAddChange("ownerEmail", text)}
-              style={styles.input}
-              keyboardType="email-address"
-            />
-            <TextInput
-              mode="outlined"
-              label="Owner Contact"
-              value={newRequestData.ownerContact}
-              onChangeText={(text) => handleAddChange("ownerContact", text)}
-              style={styles.input}
-              keyboardType="phone-pad"
-            />
-            <TextInput
-              mode="outlined"
-              label="Address"
-              value={newRequestData.address}
-              onChangeText={(text) => handleAddChange("address", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Car Name"
-              value={newRequestData.carName}
-              onChangeText={(text) => handleAddChange("carName", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Car Type"
-              value={newRequestData.carType}
-              onChangeText={(text) => handleAddChange("carType", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Car Registration Number"
-              value={newRequestData.carRegistrationNumber}
-              onChangeText={(text) => handleAddChange("carRegistrationNumber", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Service"
-              value={newRequestData.service}
-              onChangeText={(text) => handleAddChange("service", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Preferred Date"
-              value={newRequestData.requestedDate}
-              onChangeText={(text) => handleAddChange("requestedDate", text)}
-              style={styles.input}
-            />
-            <TextInput
-              mode="outlined"
-              label="Description"
-              value={newRequestData.description}
-              onChangeText={(text) => handleAddChange("description", text)}
-              style={styles.input}
-              multiline
-              numberOfLines={3}
-            />
-            <TextInput
-              mode="outlined"
-              label="Request Type"
-              value={newRequestData.requestType}
-              onChangeText={(text) => handleAddChange("requestType", text)}
-              style={styles.input}
-            />
-            {/* Optional: Allow user to change status if needed; else default is "Pending" */}
-            <RNPickerSelect
-              onValueChange={(value) => handleAddChange("status", value)}
-              items={[
-                { label: "Pending", value: "Pending" },
-                { label: "In Progress", value: "In Progress" },
-                { label: "Done", value: "Done" },
-                { label: "Cancelled", value: "Cancelled" },
-              ]}
-              value={newRequestData.status}
-              placeholder={{ label: "Select Status", value: null }}
-              style={pickerSelectStyles}
-            />
-
-            <View style={styles.buttonRow}>
-              <Button mode="contained" onPress={handleAddRequest}>
-                Submit
-              </Button>
-              <Button onPress={() => setAddModalVisible(false)} color="red">
-                Cancel
-              </Button>
-            </View>
+        <View style={newRequestStyles.modalContainer}>
+          <View style={newRequestStyles.modalContent}>
+            <Appbar.Header style={newRequestStyles.modalHeader}>
+              <Appbar.BackAction onPress={() => setAddModalVisible(false)} />
+              <Appbar.Content title="Add New Request" />
+            </Appbar.Header>
+            <ScrollView contentContainerStyle={newRequestStyles.scrollViewContent}>
+              <TextInput
+                mode="outlined"
+                label="Owner Name *"
+                value={newRequestData.ownerName}
+                onChangeText={(text) => handleAddChange("ownerName", text)}
+                style={newRequestStyles.input}
+              />
+              <TextInput
+                mode="outlined"
+                label="Owner Email"
+                value={newRequestData.ownerEmail}
+                onChangeText={(text) => handleAddChange("ownerEmail", text)}
+                style={newRequestStyles.input}
+                keyboardType="email-address"
+              />
+              <TextInput
+                mode="outlined"
+                label="Owner Contact *"
+                value={newRequestData.ownerContact}
+                onChangeText={(text) => handleAddChange("ownerContact", text)}
+                style={newRequestStyles.input}
+                keyboardType="phone-pad"
+              />
+              <TextInput
+                mode="outlined"
+                label="Address *"
+                value={newRequestData.address}
+                onChangeText={(text) => handleAddChange("address", text)}
+                style={newRequestStyles.input}
+              />
+              <RNPickerSelect
+                onValueChange={(value) => handleAddChange("carType", value)}
+                items={[
+                  { label: "Sedan", value: "Sedan" },
+                  { label: "SUV", value: "SUV" },
+                  { label: "Truck", value: "Truck" },
+                  { label: "Van", value: "Van" },
+                ]}
+                value={newRequestData.carType}
+                placeholder={{ label: "Select Car Type *", value: null }}
+                style={pickerSelectStyles}
+              />
+              <RNPickerSelect
+                onValueChange={(value) => handleAddChange("service", value)}
+                items={[
+                  { label: "Oil Change", value: "Oil Change" },
+                  { label: "Brake Service", value: "Brake Service" },
+                  { label: "Engine Repair", value: "Engine Repair" },
+                  { label: "Tire Rotation", value: "Tire Rotation" },
+                ]}
+                value={newRequestData.service}
+                placeholder={{ label: "Select Service *", value: null }}
+                style={pickerSelectStyles}
+              />
+              <View style={newRequestStyles.dateTimeContainer}>
+                <Button mode="outlined" onPress={() => setShowDatePicker(true)}>
+                  {newRequestData.preferredDateTime
+                    ? new Date(newRequestData.preferredDateTime).toLocaleString()
+                    : "Select Preferred Date & Time *"}
+                </Button>
+              </View>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={
+                    newRequestData.preferredDateTime
+                      ? new Date(newRequestData.preferredDateTime)
+                      : new Date()
+                  }
+                  mode="datetime"
+                  is24Hour={true}
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (selectedDate) {
+                      handleAddChange("preferredDateTime", selectedDate.toISOString());
+                    }
+                  }}
+                />
+              )}
+              <TextInput
+                mode="outlined"
+                label="Description"
+                value={newRequestData.description}
+                onChangeText={(text) => handleAddChange("description", text)}
+                style={newRequestStyles.input}
+                multiline
+                numberOfLines={3}
+              />
+              <TextInput
+                mode="outlined"
+                label="Request Type"
+                value={newRequestData.requestType}
+                onChangeText={(text) => handleAddChange("requestType", text)}
+                style={newRequestStyles.input}
+              />
+              <View style={newRequestStyles.buttonRow}>
+                <Button mode="contained" onPress={handleAddRequest}>
+                  Submit
+                </Button>
+                <Button onPress={() => setAddModalVisible(false)} color="red">
+                  Cancel
+                </Button>
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -337,7 +390,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 4,
     color: "black",
     paddingRight: 30,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   inputAndroid: {
     fontSize: 16,
@@ -348,7 +401,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 8,
     color: "black",
     paddingRight: 30,
-    marginBottom: 10,
+    marginBottom: 15,
   },
 });
 
@@ -374,13 +427,48 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
-  input: {
-    marginBottom: 10,
-  },
+  input: { marginBottom: 15 },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: 20,
+  },
+  dateTimeContainer: {
+    marginBottom: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
+const newRequestStyles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+  modalContent: {
+    width: "95%",
+    maxHeight: "95%",
+    backgroundColor: "white",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  modalHeader: {
+    backgroundColor: "#6200ee",
+  },
+  scrollViewContent: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  input: { marginBottom: 15 },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+  },
+  dateTimeContainer: {
+    marginBottom: 15,
   },
 });
 
