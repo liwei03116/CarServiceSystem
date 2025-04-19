@@ -69,10 +69,10 @@ const AdminTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Mechanics"
-        component={ManageMechanicsScreen}
+        name="Services"
+        component={ManageServicesScreen}
         options={{
-          tabBarLabel: "Mechanics",
+          tabBarLabel: "Services",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="wrench" color={color} size={24} />
           ),
@@ -112,10 +112,10 @@ const AdminNavigator = () => {
       />
       {/* Manage Services Screen */}
       <Stack.Screen
-        name="Services"
-        component={ManageServicesScreen}
+        name="Mechanics"
+        component={ManageMechanicsScreen}
         options={{
-          title: "Manage Services", // Set the header title to "Manage Services"
+          title: "Mechanics", // Set the header title to "Manage Services"
           //headerBackTitleVisible: false, // Remove the back button title (optional)
         }}
       />

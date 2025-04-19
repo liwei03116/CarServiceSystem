@@ -4,9 +4,9 @@ import { List, Text } from "react-native-paper";
 
 const MoreOptionsScreen = ({ navigation }) => {
   const options = [
-    { title: "User", screen: "Users" },
-    { title: "Manage Services", screen: "Services" },
-    { title: "Logout", screen: "Login", isLogout: true },
+    { title: "User", screen: "Users", icon: "account" },
+    { title: "Mechanics", screen: "Mechanics", icon: "tools" },
+    { title: "Logout", screen: "Login", isLogout: true, icon: "logout" },
   ];
 
   const handlePress = (item) => {
@@ -27,7 +27,7 @@ const MoreOptionsScreen = ({ navigation }) => {
           <List.Item
             title={item.title}
             onPress={() => handlePress(item)}
-            left={(props) => <List.Icon {...props} icon={item.isLogout ? "logout" : "cog"} />}
+            left={(props) => <List.Icon {...props} icon={item.icon} />}
             titleStyle={item.isLogout ? styles.logoutText : null}
           />
         )}
