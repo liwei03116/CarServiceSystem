@@ -28,7 +28,7 @@ const MoreOptionsScreen = ({ navigation }) => {
           <List.Item
             title={item.title}
             onPress={() => handlePress(item)}
-            left={(props) => <List.Icon {...props} icon={item.isLogout ? "logout" : "cog"} />}
+            left={(props) => <List.Icon {...props} icon={item.icon} />}
             titleStyle={item.isLogout ? styles.logoutText : null}
           />
         )}
