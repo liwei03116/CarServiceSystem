@@ -12,6 +12,7 @@ import ManageMechanicsScreen from "../screens/ManageMechanicsScreen";
 import ManageUsersScreen from "../screens/ManageUsersScreen"; // Adjust file name if needed
 import MoreOptionsScreen from "../screens/MoreOptionsScreen";
 import ManageServicesScreen from "../screens/ManageServicesScreen";
+import GenerateInvoiceScreen from "../screens/GenerateInvoiceScreen"; 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -116,6 +117,15 @@ const AdminNavigator = () => {
         component={ManageMechanicsScreen}
         options={{
           title: "Mechanics", // Set the header title to "Manage Services"
+          //headerBackTitleVisible: false, // Remove the back button title (optional)
+        }}
+      />
+      {/* Generate Invoice Screen */}
+      <Stack.Screen
+        name="Invoice"
+        component={GenerateInvoiceScreen}
+        options={{
+          title: "Invoice", // Set the header title to "Generate Invoice"
           //headerBackTitleVisible: false, // Remove the back button title (optional)
         }}
       />

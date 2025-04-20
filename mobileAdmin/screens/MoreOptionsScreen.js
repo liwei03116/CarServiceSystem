@@ -6,6 +6,7 @@ const MoreOptionsScreen = ({ navigation }) => {
   const options = [
     { title: "User", screen: "Users", icon: "account" },
     { title: "Mechanics", screen: "Mechanics", icon: "tools" },
+    { title: "Invoice", screen: "Invoice", icon: "file-document" },
     { title: "Logout", screen: "Login", isLogout: true, icon: "logout" },
   ];
 
