@@ -1,0 +1,40 @@
+
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories and lock files
+package-lock.json
+
+# Build output
+dist/
+build/
+
+# Runtime data
+pids/
+*.pid
+*.pid.lock
+
+# Coverage directory used by testing tools
+coverage/
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# Miscellaneous OS or editor files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
