@@ -24,7 +24,7 @@ const generateEnhancedInvoicePDF = async (invoiceData) => {
     doc.on('error', reject);
 
     // Header
-    doc.fontSize(12).text('Super Cheap Auto Pty Ltd - Bayswater', 50, 40);
+    doc.fontSize(12).text('Super Cheap Auto Pty Ltd - Bayswater test', 50, 40);
     doc.text('ABN 511 1066 7411');
     doc.text('191 CANTERBURY ROAD');
     doc.text('BAYSWATER VIC 3153');
